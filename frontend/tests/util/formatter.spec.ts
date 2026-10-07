@@ -6,7 +6,7 @@ import {
   toDateString,
   toFirstLetterUppercase,
   toTimeString,
-} from "@/util/formatter";
+} from "../../src/util/formatter";
 
 describe("formatter", () => {
   describe("toFirstLetterUppercase", () => {

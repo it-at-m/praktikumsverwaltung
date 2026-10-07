@@ -1,4 +1,4 @@
-import type { SimpleStudentDTO } from "@/api/generated/api-spec/models";
+import type { SimpleStudentDTO } from "../../src/api/generated/api-spec/models";
 
 import { describe, expect, it } from "vitest";
 
@@ -6,7 +6,7 @@ import {
   filterStudents,
   getStudentIdFromUsername,
   getStudiengangId,
-} from "@/util/StudentUtil";
+} from "../../src/util/StudentUtil";
 
 describe("StudentUtils", () => {
   describe("filterStudents", () => {

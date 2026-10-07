@@ -1,8 +1,8 @@
-import type { SimpleZeitgutschriftDTO } from "@/api/generated/api-spec/models";
+import type { SimpleZeitgutschriftDTO } from "../../src/api/generated/api-spec/models";
 
 import { describe, expect, it } from "vitest";
 
-import { filterZeitgutschriftenByDate } from "@/util/TimeCreditListUtil.ts";
+import { filterZeitgutschriftenByDate } from "../../src/util/TimeCreditListUtil.ts";
 
 describe("TimeCreditUtils", () => {
   describe("filterZeitgutschriftenByDate", () => {

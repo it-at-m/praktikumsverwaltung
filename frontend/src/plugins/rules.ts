@@ -1,6 +1,6 @@
 import type { Plugin } from "vue";
 
-import { createRulesPlugin } from "vuetify";
+import { createRulesPlugin } from "@/plugins/vuetify";
 
 import vuetify from "@/plugins/vuetify";
 

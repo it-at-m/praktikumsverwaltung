@@ -5,7 +5,7 @@ import {
   getRemovedStudiengangIds,
   getStudiengangId,
   getStudiengangRoute,
-} from "@/util/StudiengangUtil";
+} from "../../src/util/StudiengangUtil";
 
 describe("StudiengangUtil", () => {
   describe("getStudiengangRoute", () => {

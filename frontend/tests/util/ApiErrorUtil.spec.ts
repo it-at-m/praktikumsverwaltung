@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { ResponseError } from "@/api/generated/api-spec/runtime";
-import { isNotFoundError } from "@/util/ApiErrorUtil.ts";
+import { ResponseError } from "../../src/api/generated/api-spec/runtime";
+import { isNotFoundError } from "../../src/util/ApiErrorUtil.ts";
 
 describe("ApiErrorUtils", () => {
   it("liefert true bei einem 404 ResponseError", () => {

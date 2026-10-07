@@ -3,7 +3,8 @@
   "include": [
     "vite.config.*",
     "vitest.config.*",
-    "encode-brackets-plugin.ts" // temporary fix
+    "encode-brackets-plugin.ts"
+    // temporary fix
   ],
   "compilerOptions": {
     "composite": true,

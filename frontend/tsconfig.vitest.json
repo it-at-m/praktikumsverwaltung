@@ -12,11 +12,11 @@
   },
   "include": [
     "env.d.ts",
-    "declarations.d.ts",
-    "router.d.ts",
-    "route-map.d.ts",
+    "frontend/declarations.d.ts",
+    "frontend/router.d.ts",
+    "frontend/route-map.d.ts",
     "src/**/*.ts",
     "src/**/*.vue",
-    "tests/**/*.ts"
+    "frontend/tests/**/*.ts"
   ]
 }

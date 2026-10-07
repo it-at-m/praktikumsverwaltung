@@ -1,7 +1,7 @@
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { useValidationStore } from "@/stores/validation";
+import { useValidationStore } from "../src/stores/validation";
 
 describe("ValidationStore", () => {
   beforeEach(() => {

@@ -1,8 +1,8 @@
-import type { FullPraktikumDTO } from "@/api/generated/api-spec/models";
+import type { FullPraktikumDTO } from "../../src/api/generated/api-spec/models";
 
 import { describe, expect, it } from "vitest";
 
-import { getCalendarEvents } from "@/util/PraktikumCalendarUtil";
+import { getCalendarEvents } from "../../src/util/PraktikumCalendarUtil";
 
 describe("getCalendarEvents", () => {
   it("returns false when no Praktikum exists", () => {
