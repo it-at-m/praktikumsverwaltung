@@ -103,7 +103,7 @@ declare module 'vue-router/auto-routes' {
       pathParamNames:
         | never
     }
-    'src/routes/students/%5Bid%5D.vue': {
+    'src/routes/students/[id].vue': {
       routes:
         | '/students/[id]'
       views:

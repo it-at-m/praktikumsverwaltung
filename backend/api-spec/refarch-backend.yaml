@@ -1,36 +1,37 @@
 openapi: 3.0.1
 info:
   title: refarch-backend
-  description: This is the default starting project for a backend project based on
+  description:
+    This is the default starting project for a backend project based on
     the reference architecture of it@M
   version: 0.0.1-SNAPSHOT
 servers:
-- url: http://localhost:8086
-  description: Generated server url
+  - url: http://localhost:8086
+    description: Generated server url
 tags:
-- name: Actuator
-  description: Monitor and interact
-  externalDocs:
-    description: Spring Boot Actuator Web API Documentation
-    url: https://docs.spring.io/spring-boot/docs/current/actuator-api/html/
+  - name: Actuator
+    description: Monitor and interact
+    externalDocs:
+      description: Spring Boot Actuator Web API Documentation
+      url: https://docs.spring.io/spring-boot/docs/current/actuator-api/html/
 paths:
   /theEntity/{theEntityId}:
     get:
       tags:
-      - the-entity-controller
+        - the-entity-controller
       summary: Retrieve an entity by its UUID.
       description: |-
         Retrieve an entity by its UUID.
          Fetches the entity details using the provided UUID.
       operationId: getTheEntity
       parameters:
-      - name: theEntityId
-        in: path
-        description: the UUID of the requested entity
-        required: true
-        schema:
-          type: string
-          format: uuid
+        - name: theEntityId
+          in: path
+          description: the UUID of the requested entity
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         "200":
           description: the entity with the given UID as a DTO
@@ -39,23 +40,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/TheEntityResponseDTO"
       security:
-      - bearerAuth: []
+        - bearerAuth: []
     put:
       tags:
-      - the-entity-controller
+        - the-entity-controller
       summary: Update an existing entity.
       description: |-
         Update an existing entity.
          Updates the details of an existing entity using the provided UUID and entity details.
       operationId: updateTheEntity
       parameters:
-      - name: theEntityId
-        in: path
-        description: the UUID of the entity to update
-        required: true
-        schema:
-          type: string
-          format: uuid
+        - name: theEntityId
+          in: path
+          description: the UUID of the entity to update
+          required: true
+          schema:
+            type: string
+            format: uuid
       requestBody:
         description: the new details of the entity
         content:
@@ -71,54 +72,54 @@ paths:
               schema:
                 $ref: "#/components/schemas/TheEntityResponseDTO"
       security:
-      - bearerAuth: []
+        - bearerAuth: []
     delete:
       tags:
-      - the-entity-controller
+        - the-entity-controller
       summary: Delete an entity.
       description: |-
         Delete an entity.
          Deletes the entity using the provided UUID.
       operationId: deleteTheEntity
       parameters:
-      - name: theEntityId
-        in: path
-        description: the UUID of the entity to delete
-        required: true
-        schema:
-          type: string
-          format: uuid
+        - name: theEntityId
+          in: path
+          description: the UUID of the entity to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         "200":
           description: OK
       security:
-      - bearerAuth: []
+        - bearerAuth: []
   /theEntity:
     get:
       tags:
-      - the-entity-controller
+        - the-entity-controller
       summary: Retrieve entities with pagination.
       description: |-
         Retrieve entities with pagination.
          Fetches a paginated list of entities based on the provided page number and size.
       operationId: getTheEntitiesByPageAndSize
       parameters:
-      - name: pageNumber
-        in: query
-        description: "the number of the requested page (default: 0)"
-        required: false
-        schema:
-          type: integer
-          format: int32
-          default: 0
-      - name: pageSize
-        in: query
-        description: "the size of the page to retrieve (default: 10)"
-        required: false
-        schema:
-          type: integer
-          format: int32
-          default: 10
+        - name: pageNumber
+          in: query
+          description: "the number of the requested page (default: 0)"
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pageSize
+          in: query
+          description: "the size of the page to retrieve (default: 10)"
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
       responses:
         "200":
           description: a page of entities represented as DTOs
@@ -127,10 +128,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/PagedModelTheEntityResponseDTO"
       security:
-      - bearerAuth: []
+        - bearerAuth: []
     post:
       tags:
-      - the-entity-controller
+        - the-entity-controller
       summary: Create a new entity.
       description: |-
         Create a new entity.
@@ -151,11 +152,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/TheEntityResponseDTO"
       security:
-      - bearerAuth: []
+        - bearerAuth: []
   /actuator:
     get:
       tags:
-      - Actuator
+        - Actuator
       summary: Actuator root web endpoint
       operationId: links
       responses:
@@ -186,7 +187,7 @@ paths:
   /actuator/sbom:
     get:
       tags:
-      - Actuator
+        - Actuator
       summary: Actuator web endpoint 'sbom'
       operationId: sboms
       responses:
@@ -205,15 +206,15 @@ paths:
   /actuator/sbom/{id}:
     get:
       tags:
-      - Actuator
+        - Actuator
       summary: Actuator web endpoint 'sbom-id'
       operationId: sbom
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -226,22 +227,22 @@ paths:
   /actuator/metrics:
     get:
       tags:
-      - Actuator
+        - Actuator
       summary: Actuator web endpoint 'prometheus'
       operationId: scrape
       parameters:
-      - name: format
-        in: query
-        schema:
-          type: string
-          enum:
-          - CONTENT_TYPE_004
-          - CONTENT_TYPE_OPENMETRICS_100
-          - CONTENT_TYPE_PROTOBUF
-      - name: includedNames
-        in: query
-        schema:
-          type: string
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum:
+              - CONTENT_TYPE_004
+              - CONTENT_TYPE_OPENMETRICS_100
+              - CONTENT_TYPE_PROTOBUF
+        - name: includedNames
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -258,7 +259,7 @@ paths:
   /actuator/info:
     get:
       tags:
-      - Actuator
+        - Actuator
       summary: Actuator web endpoint 'info'
       operationId: info
       responses:
@@ -277,7 +278,7 @@ paths:
   /actuator/health:
     get:
       tags:
-      - Actuator
+        - Actuator
       summary: Actuator web endpoint 'health'
       operationId: health
       responses:
@@ -297,7 +298,7 @@ components:
   schemas:
     TheEntityRequestDTO:
       required:
-      - textAttribute
+        - textAttribute
       type: object
       properties:
         textAttribute:
