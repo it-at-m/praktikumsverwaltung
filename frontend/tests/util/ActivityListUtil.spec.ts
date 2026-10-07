@@ -1,8 +1,11 @@
-import type { TaetigkeitenblockDTO } from "../../src/api/generated/api-spec/models";
-
 import { describe, expect, it } from "vitest";
 
-import { filterAndSortActivities, isSameDate } from "../../src/util/ActivityListUtil";
+import type { TaetigkeitenblockDTO } from "../../src/api/generated/api-spec/models";
+
+import {
+  filterAndSortActivities,
+  isSameDate,
+} from "../../src/util/ActivityListUtil";
 
 describe("ActivityListUtils", () => {
   describe("isSameDate", () => {

@@ -1,8 +1,6 @@
 import type { Plugin } from "vue";
 
-import { createRulesPlugin } from "@/plugins/vuetify";
-
-import vuetify from "@/plugins/vuetify";
+import vuetify, { createRulesPlugin } from "@/plugins/vuetify";
 
 /**
  * Custom type required as CustomValidationRuleBuilder type from Vuetify is not accessible.

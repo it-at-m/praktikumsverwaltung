@@ -1,6 +1,6 @@
-import type { SimpleStudentDTO } from "../../src/api/generated/api-spec/models";
-
 import { describe, expect, it } from "vitest";
+
+import type { SimpleStudentDTO } from "../../src/api/generated/api-spec/models";
 
 import {
   filterStudents,

@@ -1,8 +1,8 @@
-import type { FullPraktikumDTO } from "../../src/api/generated/api-spec/models";
-
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import { createVuetify } from "vuetify";
+
+import type { FullPraktikumDTO } from "../../src/api/generated/api-spec/models";
 
 import ActivityList from "../../src/components/praktikum/ActivityList.vue";
 

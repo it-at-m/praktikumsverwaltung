@@ -1,6 +1,6 @@
-import type { FullPraktikumDTO } from "../../src/api/generated/api-spec/models";
-
 import { describe, expect, it } from "vitest";
+
+import type { FullPraktikumDTO } from "../../src/api/generated/api-spec/models";
 
 import { getCalendarEvents } from "../../src/util/PraktikumCalendarUtil";
 

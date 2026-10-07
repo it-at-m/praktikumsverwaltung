@@ -8,9 +8,7 @@
     "src/**/*",
     "src/**/*.vue"
   ],
-  "exclude": [
-    "frontend/tests/tests/**/*"
-  ],
+  "exclude": ["frontend/tests/tests/**/*"],
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./cache/tsconfig.app.tsbuildinfo",
