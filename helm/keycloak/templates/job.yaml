@@ -1,0 +1,56 @@
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: keycloak-init-recovery
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "10"
+    "helm.sh/hook-delete-policy": before-hook-creation
+
+spec:
+  backoffLimit: 2
+
+  template:
+    spec:
+      restartPolicy: Never
+
+      containers:
+        - name: migration
+          image: "{{ .Values.migration.image }}"
+
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+
+          env:
+            - name: BASEURL
+              value: "http://keycloak:8080/auth"
+
+            - name: ADMIN_USER
+              value: "admin"
+
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-admin
+                  key: admin
+
+            - name: KEYCLOAK_CHANGELOG
+              value: "/migration/keycloak-changelog.yml"
+
+            - name: EXIT_ON_ERROR
+              value: "true"
+
+          volumeMounts:
+            - name: migration
+              mountPath: /migration
+              readOnly: true
+
+      volumes:
+        - name: migration
+          configMap:
+            name: keycloak-migration

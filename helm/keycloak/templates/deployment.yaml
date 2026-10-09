@@ -1,0 +1,63 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: refarch-example
+
+spec:
+  replicas: 1
+
+  strategy:
+    type: Recreate
+
+  selector:
+    matchLabels:
+      app: keycloak
+
+  template:
+    metadata:
+      labels:
+        app: keycloak
+
+    spec:
+      containers:
+        - name: keycloak
+          image: capquay.muenchen.de/quay.io/keycloak/keycloak:26.6.4
+
+          args:
+            - start-dev
+
+          ports:
+            - name: http
+              containerPort: 8080
+
+          env:
+            - name: KC_HTTP_RELATIVE_PATH
+              value: "/auth"
+
+            - name: KC_HTTP_ENABLED
+              value: "true"
+
+            - name: KC_HOSTNAME
+              value: "https://keycloak-refarch-example.apps.test.capk.muenchen.de/auth"
+
+            - name: KC_PROXY_HEADERS
+              value: "xforwarded"
+
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              value: "admin"
+
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-admin
+                  key: admin
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 768Mi
