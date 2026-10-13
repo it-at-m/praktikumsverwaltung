@@ -12,7 +12,6 @@ refarch-templates:
         pullPolicy: Always
 
       replicas: 1
-
       service:
         http: true
 
@@ -32,7 +31,6 @@ refarch-templates:
         pullPolicy: Always
 
       replicas: 1
-
       service:
         http: true
 
@@ -138,23 +136,3 @@ refarch-gateway:
                 jwk-set-uri: http://keycloak:8080/auth/realms/local_realm/protocol/openid-connect/certs
                 user-info-uri: http://keycloak:8080/auth/realms/local_realm/protocol/openid-connect/userinfo
                 user-name-attribute: preferred_username
-
-  volumes:
-    - name: cacerts-volume
-      secret:
-        secretName: cacerts-lhm
-        items:
-          - key: cacerts-lhm
-            path: cacerts-lhm
-
-  volumeMounts:
-    - name: cacerts-volume
-      mountPath: /mnt/cacerts-lhm
-      subPath: cacerts-lhm
-      readOnly: true
-
-  envAppend:
-    - name: JAVA_OPTS_APPEND
-      value: >-
-        -Djavax.net.ssl.trustStore=/mnt/cacerts-lhm
-        -Djavax.net.ssl.trustStorePassword=changeit
