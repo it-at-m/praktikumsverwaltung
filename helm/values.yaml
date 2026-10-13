@@ -1,0 +1,160 @@
+
+refarch-templates:
+  refarch-gateway:
+    enabled: false
+
+  modules:
+    frontend:
+      image:
+        registry: ghcr.io
+        repository: it-at-m/praktikumsverwaltung/frontend
+        tag: dev
+        pullPolicy: Always
+
+      replicas: 1
+
+      service:
+        http: true
+
+      resources:
+        requests:
+          cpu: 10m
+          memory: 16Mi
+        limits:
+          cpu: 100m
+          memory: 64Mi
+
+    backend:
+      image:
+        registry: ghcr.io
+        repository: it-at-m/praktikumsverwaltung/backend
+        tag: dev
+        pullPolicy: Always
+
+      replicas: 1
+
+      service:
+        http: true
+
+      startupProbe:
+        httpGet:
+          path: /actuator/health
+          port: http
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 3
+        failureThreshold: 30
+
+      resources:
+        requests:
+          cpu: 25m
+          memory: 128Mi
+        limits:
+          cpu: 250m
+          memory: 384Mi
+
+      env:
+        - name: SERVER_PORT
+          value: "8080"
+        - name: SPRING_PROFILES_ACTIVE
+          value: "local"
+        - name: SSO_URL
+          value: "http://keycloak:8080"
+        - name: SSO_REALM
+          value: "local_realm"
+        - name: SSO_CLIENT
+          value: "local"
+
+refarch-gateway:
+  enabled: true
+  replicaCount: 1
+
+  resources:
+    requests:
+      cpu: 25m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 384Mi
+
+  javaHeapMaxMemRatio: 40
+
+  hazelcast:
+    enabled: false
+
+  ingress:
+    enabled: false
+
+  applicationYML:
+    spring:
+      cloud:
+        gateway:
+          server:
+            webflux:
+              routes:
+                - id: sso
+                  order: -10
+                  uri: http://keycloak:8080
+                  predicates:
+                    - Path=/api/sso/userinfo
+                  filters:
+                    - RewritePath=/api/sso/userinfo, /auth/realms/local_realm/protocol/openid-connect/userinfo
+
+                - id: backend
+                  order: -5
+                  uri: http://praktikumsverwaltung-backend:8080
+                  predicates:
+                    - Path=/api/backend/**
+                  filters:
+                    - StripPrefix=2
+
+                - id: frontend
+                  order: 100
+                  uri: http://praktikumsverwaltung-frontend:8080
+                  predicates:
+                    - Path=/**
+
+      security:
+        oauth2:
+          resourceserver:
+            jwt:
+              issuer-uri: https://keycloak-refarch-example.apps.test.capk.muenchen.de/auth/realms/local_realm
+              jwk-set-uri: http://keycloak:8080/auth/realms/local_realm/protocol/openid-connect/certs
+
+          client:
+            registration:
+              keycloak:
+                provider: keycloak
+                client-id: local
+                client-secret: client_secret
+                authorization-grant-type: authorization_code
+                redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+                scope: profile, openid, roles
+
+            provider:
+              keycloak:
+                authorization-uri: https://keycloak-refarch-example.apps.test.capk.muenchen.de/auth/realms/local_realm/protocol/openid-connect/auth
+                token-uri: http://keycloak:8080/auth/realms/local_realm/protocol/openid-connect/token
+                jwk-set-uri: http://keycloak:8080/auth/realms/local_realm/protocol/openid-connect/certs
+                user-info-uri: http://keycloak:8080/auth/realms/local_realm/protocol/openid-connect/userinfo
+                user-name-attribute: preferred_username
+
+  volumes:
+    - name: cacerts-volume
+      secret:
+        secretName: cacerts-lhm
+        items:
+          - key: cacerts-lhm
+            path: cacerts-lhm
+
+  volumeMounts:
+    - name: cacerts-volume
+      mountPath: /mnt/cacerts-lhm
+      subPath: cacerts-lhm
+      readOnly: true
+
+  envAppend:
+    - name: JAVA_OPTS_APPEND
+      value: >-
+        -Djavax.net.ssl.trustStore=/mnt/cacerts-lhm
+        -Djavax.net.ssl.trustStorePassword=changeit

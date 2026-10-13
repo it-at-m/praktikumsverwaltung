@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-migration
+data:
+  {{- range $path, $_ := .Files.Glob "migrations/*.yml" }}
+  {{ base $path }}: |
+{{ $.Files.Get $path | indent 4 }}
+  {{- end }}
+  keycloak-changelog.yml: |
+{{ .Files.Get "keycloak-changelog.yml" | indent 4 }}
