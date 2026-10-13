@@ -44,15 +44,16 @@ public final class Authorities {
 
     public static final class Taetigkeitenblock {
         public static final String GET_BY_ID_AND_DAY = ADMIN_OR_LEGIT_USER_OR_LEGIT_FACHUSER;
-        public static final String POST = ADMIN_OR_LEGIT_USER_OR_LEGIT_FACHUSER;
-        public static final String PUT = ADMIN_OR_LEGIT_USER_OR_LEGIT_FACHUSER;
-        public static final String DELETE = ADMIN_OR_LEGIT_USER_OR_LEGIT_FACHUSER;
+        //public static final String POST = ADMIN_OR_LEGIT_USER_OR_LEGIT_FACHUSER;
+        public static final String POST = "hasRole('admin') or hasRole('student') and #dto.studentId == @authUtils.getUserNumber() or hasRole('fachstudent') and #dto.studentId == @authUtils.getUserNumber()";
+        public static final String PUT = "hasRole('admin') or hasRole('student') and #studentId == @authUtils.getUserNumber() or hasRole('fachstudent') and #studentId == @authUtils.getUserNumber()";
+        public static final String DELETE = "hasRole('admin') or hasRole('student') and #studentId == @authUtils.getUserNumber() or hasRole('fachstudent') and #studentId == @authUtils.getUserNumber()";
     }
 
     public static final class Zeitgutschrift {
-        public static final String POST = ADMIN_OR_LEGIT_FACHUSER;
-        public static final String PUT = ADMIN_OR_LEGIT_FACHUSER;
-        public static final String DELETE_BY_ID = ADMIN_OR_LEGIT_FACHUSER;
+        public static final String POST = "hasRole('admin') or hasRole('fachstudent') and authUtils.getUserNumber() == #body.praktikumId";
+        public static final String PUT = "hasRole('admin') or hasRole('fachstudent') and authUtils.getUserNumber() == #body.praktikumId";
+        public static final String DELETE_BY_ID = "hasRole('admin') or hasRole('fachstudent') and @ZeitgutschriftService.isOwnedBy(@authUtils.getUserNumber, #id)";
     }
 
     private Authorities() {

@@ -2,7 +2,6 @@ package de.muenchen.oss.refarch.backend.entities.zeitgutschrift;
 
 import de.muenchen.oss.refarch.backend.entities.zeitgutschrift.dto.ZeitgutschriftCreateDTO;
 import de.muenchen.oss.refarch.backend.entities.zeitgutschrift.dto.ZeitgutschriftUpdateDTO;
-import de.muenchen.oss.refarch.backend.security.Authorities;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,21 +20,21 @@ class ZeitgutschriftController {
 
     private final ZeitgutschriftService service;
 
-    @PreAuthorize(Authorities.Zeitgutschrift.POST)
+    @PreAuthorize("hasRole('admin') or hasRole('fachstudent') and @authUtils.getUserNumber() == #body.praktikumID")
     @PostMapping("/zeitgutschrift")
     @ResponseStatus(HttpStatus.CREATED)
     public int createZeitgutschrift(@RequestBody @Valid final ZeitgutschriftCreateDTO body) {
         return service.createZeitgutschriftFromCreationDto(body);
     }
 
-    @PreAuthorize(Authorities.Zeitgutschrift.PUT)
+    @PreAuthorize("hasRole('admin') or hasRole('fachstudent') and @authUtils.getUserNumber() == #body.praktikumID")
     @PutMapping("/zeitgutschrift")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateZeitgutschrift(@RequestBody @Valid final ZeitgutschriftUpdateDTO body) {
         service.updateZeitgutschriftFromCreationDto(body);
     }
 
-    @PreAuthorize(Authorities.Zeitgutschrift.DELETE_BY_ID)
+    @PreAuthorize("hasRole('admin') or hasRole('fachstudent') and @zeitgutschriftService.isOwnedBy(@authUtils.getUserNumber, #id)")
     @DeleteMapping("/zeitgutschrift/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteZeitgutschrift(@PathVariable final int id) {

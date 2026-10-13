@@ -34,14 +34,18 @@ class TaetigkeitenblockController {
         return mapper.toDTOs(taetigkeitenblockService.getTaetigkeitbyDay(studentid, tag));
     }
 
-    @PreAuthorize(Authorities.Taetigkeitenblock.POST)
+    @PreAuthorize(
+        "hasRole('admin') or hasRole('student') and #dto.studentId == @authUtils.getUserNumber() or hasRole('fachstudent') and #dto.studentId == @authUtils.getUserNumber()"
+    )
     @PostMapping("/taetigkeitenblock")
     @ResponseStatus(HttpStatus.CREATED)
     public void createTaetigkeitenblock(@RequestBody @Valid final TaetigkeitenblockCreationDTO dto) {
         taetigkeitenblockService.createTaetigkeitenblock(mapper.toEntity(dto));
     }
 
-    @PreAuthorize(Authorities.Taetigkeitenblock.PUT)
+    @PreAuthorize(
+        "hasRole('admin') or hasRole('student') and #studentId == @authUtils.getUserNumber() or hasRole('fachstudent') and #studentId == @authUtils.getUserNumber()"
+    )
     @PutMapping("/taetigkeitenblock")
     @ResponseStatus(HttpStatus.OK)
     public TaetigkeitenblockDTO updateTaetigkeitenblock(@RequestParam final int studentId, @RequestParam final LocalTime beginnZeit,
@@ -49,7 +53,9 @@ class TaetigkeitenblockController {
         return mapper.toDTO(taetigkeitenblockService.updateTaetigkeitenblock(mapper.toEntity(tag, beginnZeit, endeZeit, studentId), mapper.toEntity(dto)));
     }
 
-    @PreAuthorize(Authorities.Taetigkeitenblock.DELETE)
+    @PreAuthorize(
+        "hasRole('admin') or hasRole('student') and #studentId == @authUtils.getUserNumber() or hasRole('fachstudent') and #studentId == @authUtils.getUserNumber()"
+    )
     @DeleteMapping("/taetigkeitenblock")
     @ResponseStatus(HttpStatus.OK)
     public void deleteTaetigkeitenblock(
