@@ -1,4 +1,3 @@
-
 name: release
 
 on:
@@ -9,6 +8,11 @@ on:
         required: true
         type: string
 
+  pull_request:
+    types: [closed]
+    branches:
+      - dev
+
 permissions:
   contents: read
 
@@ -18,11 +22,12 @@ concurrency:
 
 jobs:
   version:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
-    outputs:
-      tag: ${{ steps.version.outputs.tag }}
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -41,6 +46,11 @@ jobs:
             exit 1
           fi
 
+          if git ls-remote --exit-code --heads origin "release/v$VERSION" >/dev/null 2>&1; then
+            echo "Release branch already exists"
+            exit 1
+          fi
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -51,6 +61,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24.11.1'
+
+      - name: Create release branch
+        env:
+          VERSION: ${{ inputs.releaseVersion }}
+        run: |
+          git switch -c "release/v$VERSION"
 
       - name: Update backend version
         working-directory: backend
@@ -70,8 +86,7 @@ jobs:
             --no-git-tag-version \
             --allow-same-version
 
-      - name: Commit and tag
-        id: version
+      - name: Commit and push release branch
         env:
           VERSION: ${{ inputs.releaseVersion }}
         run: |
@@ -80,16 +95,71 @@ jobs:
 
           git add -u backend frontend
           git commit -m "chore: release v$VERSION"
-          git push origin HEAD:dev
+          git push origin "release/v$VERSION"
 
-          git tag "v$VERSION"
+      - name: Create pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ inputs.releaseVersion }}
+        run: |
+          gh pr create \
+            --repo "$GITHUB_REPOSITORY" \
+            --base dev \
+            --head "release/v$VERSION" \
+            --title "chore: release v$VERSION" \
+            --body "Release version $VERSION"
+
+  tag:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'release/v')
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    outputs:
+      tag: ${{ steps.create-tag.outputs.tag }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: 0
+
+      - name: Create release tag
+        id: create-tag
+        env:
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+        run: |
+          VERSION="${BRANCH#release/v}"
+
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || exit 1
+          [[ "$BASE_BRANCH" == "dev" ]] || exit 1
+
+          git fetch origin dev --tags
+
+          if git rev-parse "refs/tags/v$VERSION" >/dev/null 2>&1; then
+            echo "Release tag already exists"
+            exit 1
+          fi
+
+          # Ensure the release commit is part of dev.
+          git merge-base --is-ancestor "$MERGE_SHA" origin/dev
+
+          git tag "v$VERSION" "$MERGE_SHA"
           git push origin "v$VERSION"
 
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
   build:
-    needs: version
+    if: needs.tag.result == 'success'
+    needs: tag
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
@@ -104,7 +174,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.version.outputs.tag }}
+          ref: ${{ needs.tag.outputs.tag }}
 
       - id: node
         if: ${{ matrix.app-path == 'frontend' }}
@@ -126,14 +196,16 @@ jobs:
           artifact-name: ${{ join(steps.*.outputs.artifact-name) }}
           image-name: ${{ matrix.app-path }}
           image-tags: |
-            type=raw,value=${{ needs.version.outputs.tag }}
+            type=raw,value=${{ needs.tag.outputs.tag }}
           platforms: "linux/amd64,linux/arm64"
           registry-password: ${{ secrets.GITHUB_TOKEN }}
           registry-username: ${{ github.actor }}
 
   github-release:
-    needs: [version, build]
+    if: needs.tag.result == 'success'
+    needs: [tag, build]
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
 
@@ -141,7 +213,7 @@ jobs:
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ needs.version.outputs.tag }}
+          TAG: ${{ needs.tag.outputs.tag }}
         run: |
           gh release create "$TAG" \
             --repo "$GITHUB_REPOSITORY" \
