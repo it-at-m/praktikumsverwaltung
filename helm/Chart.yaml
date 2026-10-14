@@ -1,0 +1,14 @@
+apiVersion: v2
+name: praktikumsverwaltung
+description: Praktikumsverwaltung mit RefArch
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: refarch-templates
+    version: "2.3.0"
+    repository: https://it-at-m.github.io/helm-charts
+
+  - name: refarch-gateway
+    version: "1.10.0"
+    repository: https://it-at-m.github.io/helm-charts

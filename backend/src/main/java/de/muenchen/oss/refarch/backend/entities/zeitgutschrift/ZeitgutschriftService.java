@@ -58,8 +58,12 @@ public class ZeitgutschriftService {
     }
 
     public void deleteZeitgutschrift(final int zeitgutschriftId) {
-        repository.delete(repository.findById(zeitgutschriftId)
-                .orElseThrow(() -> new NotFoundException(
-                        String.format(ZEITGUTSCHRIFT_NOT_FOUND, zeitgutschriftId))));
+        repository.delete(
+                repository.findById(zeitgutschriftId).orElseThrow(() -> new NotFoundException(String.format(ZEITGUTSCHRIFT_NOT_FOUND, zeitgutschriftId))));
+    }
+
+    public boolean isOwnedBy(final int userId, final int zeitgutschriftId) {
+        final Zeitgutschrift z = repository.findById(zeitgutschriftId).orElseThrow(() -> new NotFoundException(ZEITGUTSCHRIFT_NOT_FOUND));
+        return z.getPraktikum().getStudentId() == userId;
     }
 }

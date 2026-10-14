@@ -1,0 +1,9 @@
+dependencies:
+- name: refarch-templates
+  repository: https://it-at-m.github.io/helm-charts
+  version: 2.3.0
+- name: refarch-gateway
+  repository: https://it-at-m.github.io/helm-charts
+  version: 1.10.0
+digest: sha256:cfd6fb60d464fe02ac139d128b9f6bf244986fa30d03000163ccc254b32f91e9
+generated: "2026-10-12T12:15:04.0916084+02:00"

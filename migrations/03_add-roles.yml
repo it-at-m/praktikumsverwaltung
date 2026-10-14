@@ -1,0 +1,24 @@
+id: add roles
+author: Default
+realm: local_realm
+changes:
+  - addRole:
+      name: admin
+      description: Admin role for our test project
+      clientRole: true
+      clientId: local
+      composite: false
+
+  - addRole:
+      name: student
+      description: Default student role for our test project
+      clientRole: true
+      clientId: local
+      composite: false
+
+  - addRole:
+      name: fachstudent
+      description: Student role that can add Zeitgutschriften
+      clientRole: true
+      clientId: local
+      composite: false

@@ -1,0 +1,39 @@
+id: add users
+author: Default
+realm: local_realm
+changes:
+  - addUser:
+      name: 100
+      lastName: Mustermann
+      firstName: Max
+      enabled: true
+      emailVerified: true
+      email: none0@none
+
+  - updateUserPassword:
+      name: 100
+      password: test
+
+  - addUser:
+      name: 101
+      lastName: Huber
+      firstName: Ernst
+      enabled: true
+      emailVerified: true
+      email: none1@none
+
+  - updateUserPassword:
+      name: 101
+      password: test
+
+  - addUser:
+      name: 102
+      lastName: Müller
+      firstName: Jonas
+      enabled: true
+      emailVerified: true
+      email: none2@none
+
+  - updateUserPassword:
+      name: 102
+      password: test
